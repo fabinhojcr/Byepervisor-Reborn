@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ps5-payload-dev/sdk:latest # Ou a imagem Docker oficial do SDK utilizada pelo projeto original
+      image: https://github.com/ps5-payload-dev/sdk/releases :latest # Ou a imagem Docker oficial do SDK utilizada pelo projeto original
 
     steps:
       - name: Checkout repository
