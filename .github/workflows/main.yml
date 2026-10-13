@@ -12,13 +12,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup PS5-Payload-Dev SDK
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential clang lld llvm make git
-          git clone --recursive https://github.com/ps5-payload-dev/sdk.pt.git ps5-sdk || git clone --recursive https://github.com/ps5-payload-dev/sdk.git ps5-sdk
+          
+          # Remove qualquer pasta ps5-sdk antiga para evitar conflitos de diretório
+          rm -rf ps5-sdk
+          
+          # Clona o repositório correto com os submódulos de forma recursiva
+          git clone --recursive https://github.com/ps5-payload-dev/sdk.git ps5-sdk
+          
+          # Compila o SDK
           make -C ps5-sdk
+          
+          # Configura as variáveis de ambiente para a etapa de build
           echo "PS5_PAYLOAD_SDK=$GITHUB_WORKSPACE/ps5-sdk" >> $GITHUB_ENV
           echo "PS5_SDK=$GITHUB_WORKSPACE/ps5-sdk" >> $GITHUB_ENV
 
