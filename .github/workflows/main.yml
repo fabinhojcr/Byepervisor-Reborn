@@ -1,7 +1,9 @@
-name: Build PS5 ELF
+name: Build PS5 Payload
 
 on:
   push:
+    branches: [ "main", "master" ]
+  pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
@@ -10,30 +12,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y clang llvm cmake ninja-build make
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang lld make git wget
 
-    - name: Setup PS5 Payload SDK
-      run: |
-        git clone --recursive https://github.com/PS5DEV/ps5-payload-sdk.git $HOME/ps5-sdk
-        cd $HOME/ps5-sdk
-        make
-        echo "PS5_SDK=$HOME/ps5-sdk" >> $GITHUB_ENV
-        echo "PS5_PAYLOAD_SDK=$HOME/ps5-sdk" >> $GITHUB_ENV
+      - name: Setup PS5 Payload SDK
+        env:
+          GIT_TERMINAL_PROMPT: 0
+        run: |
+          git clone --recursive https://github.com/PS5DEV/ps5-payload-sdk.git $HOME/ps5-sdk
 
-    - name: Build project
-      run: |
-        make PS5_SDK=$HOME/ps5-sdk
+      - name: Build project
+        run: |
+          export PS5_SDK=$HOME/ps5-sdk
+          make
 
-    - name: Upload ELF artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ps5-elf-payload
-        path: |
-          *.elf
-          build/*.elf
+      - name: Upload ELF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: payload-elf
+          path: |
+            *.elf
