@@ -10,5 +10,5 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Compilar o payload
-        working-directory: ./Byepervisor-Reborn/break_hv_payload/
+        working-directory: /break_hv_payload/
         run: make
