@@ -1,14 +1,32 @@
-name: Build Payload
+name: Build PS5 Payload
 
-on: [push]
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Baixar o repositório
-        uses: actions/checkout@v4
+    container:
+      image: ghcr.io/ps5-payload-dev/sdk:latest # Ou a imagem Docker oficial do SDK utilizada pelo projeto original
 
-      - name: Compilar o payload
-        working-directory: /break_hv_payload/
-        run: make
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build payload
+        run: |
+          make
+
+      - name: Upload ELF Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps5-payload-elf
+          path: |
+            *.elf
+            bin/*.elf
