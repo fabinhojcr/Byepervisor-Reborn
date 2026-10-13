@@ -21,6 +21,7 @@ jobs:
     - name: Setup PS5 Payload SDK
       run: |
         git clone --recursive https://github.com/ps5-payload-dev/sdk.git $HOME/ps5-sdk
+        echo "PS5_SDK=$HOME/ps5-sdk" >> $GITHUB_ENV
         echo "PS5_PAYLOAD_SDK=$HOME/ps5-sdk" >> $GITHUB_ENV
 
     - name: Build project
