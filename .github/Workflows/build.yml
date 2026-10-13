@@ -1,0 +1,35 @@
+name: Build PS5 ELF
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up PS5 SDK
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential clang lld
+        git clone https://github.com/ps5-payload-dev/sdk.git /tmp/ps5-sdk
+        cd /tmp/ps5-sdk && make
+        echo "PS5_SDK=/tmp/ps5-sdk" >> $GITHUB_ENV
+
+    - name: Build ELF
+      run: |
+        make
+
+    - name: Upload ELF Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ps5-elf-binary
+        path: |
+          *.elf
