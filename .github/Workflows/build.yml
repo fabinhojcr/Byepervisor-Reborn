@@ -21,12 +21,14 @@ jobs:
     - name: Setup PS5 Payload SDK
       run: |
         git clone --recursive https://github.com/ps5-payload-dev/sdk.git $HOME/ps5-sdk
+        mkdir -p $HOME/ps5-sdk/toolchain
+        ln -s $HOME/ps5-sdk/mk/prospero.mk $HOME/ps5-sdk/toolchain/prospero.mk
         echo "PS5_SDK=$HOME/ps5-sdk" >> $GITHUB_ENV
         echo "PS5_PAYLOAD_SDK=$HOME/ps5-sdk" >> $GITHUB_ENV
 
     - name: Build project
       run: |
-        make
+        make PS5_SDK=$HOME/ps5-sdk
 
     - name: Upload ELF artifact
       uses: actions/upload-artifact@v4
